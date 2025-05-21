@@ -32,14 +32,12 @@ jobs:
       - name: Find changed txt files
         id: changed-files
         run: |
-          # Get base and head commits of the PR
           BASE_COMMIT=$(git merge-base ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})
           HEAD_COMMIT=${{ github.event.pull_request.merge_commit_sha }}
-          
-          # Find modified and added txt files between base and merge commit
           CHANGED_FILES=$(git diff --name-only --diff-filter=AM $BASE_COMMIT $HEAD_COMMIT | grep '\.txt$' || echo "")
           echo "Changed txt files: $CHANGED_FILES"
-          echo "files=$CHANGED_FILES" >> $GITHUB_OUTPUT
+          CHANGED_FILES_SINGLE_LINE=$(echo "$CHANGED_FILES" | tr '\n' ' ')
+          echo "files=$CHANGED_FILES_SINGLE_LINE" >> $GITHUB_OUTPUT
 
       - name: Upload to Azure Blob Storage
         env:
